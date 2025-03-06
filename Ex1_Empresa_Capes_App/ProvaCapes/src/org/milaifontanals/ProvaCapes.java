@@ -4,8 +4,13 @@
  */
 package org.milaifontanals;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.Properties;
 import org.milaifontanals.empresa.Empleat;
+import org.milaifontanals.persistence.GestorEmpresaException;
 import org.milaifontanals.persistence.IGestorEmpresa;
 
 /**
@@ -15,7 +20,7 @@ import org.milaifontanals.persistence.IGestorEmpresa;
  *  nomFitxerConfiguracioCapa, amb el nom del fitxer de configuració que necessita el constructor de la capa
  * @author Juan Antonio
  */
-public class ProvaEPXQJ {
+public class ProvaCapes {
 
     public static void main(String[] args) {
         if (args.length!=1) {
@@ -24,16 +29,36 @@ public class ProvaEPXQJ {
             System.exit(1);
         }
         
-        Properties p = new Properties();
-        String className = "";
+        Properties props = new Properties();
+        
+        try{
+            props.load(new FileInputStream(args[0]));
+        }catch(FileNotFoundException ex){
+            System.out.println("No es troba el fitxer de propietats: "+args[0]);
+            System.exit(2);
+        }catch(IOException ex){
+            System.out.println("Error en intentar carregar el fitxer de propietats: "+args[0]);
+            System.exit(2);
+        }
+        
+        
+        String nomCapa = props.getProperty("nomCapa");
+        String nomFitxerConfitugracioCapa = props.getProperty("nomFitxerConfitugracioCapa");
+        
+        if(nomCapa== null || nomFitxerConfitugracioCapa == null || nomCapa.length() == 0 || nomFitxerConfitugracioCapa.length() == 0 ){
+            System.out.println("Contingut del fitxer de propietats "+ args[0]+ " no es correcte.");
+            System.exit(4);
+        }
         
         
         IGestorEmpresa cp;
+        
         try {
+            Class compo = Class.forName(nomCapa);
             
-            Class compo = Class.forName(className);
+            Constructor c = compo.getConstructor(String.class);
+            cp = (IGestorEmpresa) c.newInstance(nomFitxerConfitugracioCapa);
             
-            cp = new EPXQJ(args[0]);
             System.out.println("Connexió establerta");
         } catch (Exception ex) {
             System.out.println("Problema en crear la capa de persistència");
@@ -81,7 +106,7 @@ public class ProvaEPXQJ {
             try {
                 int q = cp.comptarSubordinats(codi);
                 System.out.println(q);
-            } catch (EPXQJException ex) {
+            } catch (GestorEmpresaException ex) {
                 System.out.println("\nProblema en comptar subordinats de l'empleat " + codi);
                 infoError(ex);
             }
@@ -101,7 +126,7 @@ public class ProvaEPXQJ {
         for (int i = 0; i < tprova4.length; i++) {
             try {
                 System.out.println("Empleat " + tprova4[i] + " te per subordinat dir/ind l'empleat " + emp[i] + "? " + cp.esSubordinatDirecteIndirecte(tprova4[i], emp[i]));
-            } catch (EPXQJException ex) {
+            } catch (GestorEmpresaException ex) {
                 System.out.println("Problema en recuperar l'empleat");
                 infoError(ex);
             }
@@ -124,7 +149,7 @@ public class ProvaEPXQJ {
                 cp.eliminarEmpleat(tprova5[i], actCap[i]);
                 cp.commit();
                 System.out.println("Eliminació efectuada!");
-            } catch (EPXQJException ex) {
+            } catch (GestorEmpresaException ex) {
                 System.out.println("Problema en eliminar empleat " + tprova5[i]);
                 infoError(ex);
             }
