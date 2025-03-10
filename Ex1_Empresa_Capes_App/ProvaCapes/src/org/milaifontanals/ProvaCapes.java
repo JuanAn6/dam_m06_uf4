@@ -43,9 +43,12 @@ public class ProvaCapes {
         
         
         String nomCapa = props.getProperty("nomCapa");
-        String nomFitxerConfitugracioCapa = props.getProperty("nomFitxerConfitugracioCapa");
+        String nomFitxerConfiguracioCapa = props.getProperty("nomFitxerConfiguracioCapa");
         
-        if(nomCapa== null || nomFitxerConfitugracioCapa == null || nomCapa.length() == 0 || nomFitxerConfitugracioCapa.length() == 0 ){
+        System.out.println("CAPA: "+nomCapa);
+        System.out.println("FITXER: "+nomFitxerConfiguracioCapa);
+        
+        if(nomCapa== null || nomFitxerConfiguracioCapa == null || nomCapa.length() == 0 || nomFitxerConfiguracioCapa.length() == 0 ){
             System.out.println("Contingut del fitxer de propietats "+ args[0]+ " no es correcte.");
             System.exit(4);
         }
@@ -57,7 +60,7 @@ public class ProvaCapes {
             Class compo = Class.forName(nomCapa);
             
             Constructor c = compo.getConstructor(String.class);
-            cp = (IGestorEmpresa) c.newInstance(nomFitxerConfitugracioCapa);
+            cp = (IGestorEmpresa) c.newInstance(nomFitxerConfiguracioCapa);
             
             System.out.println("Connexió establerta");
         } catch (Exception ex) {
