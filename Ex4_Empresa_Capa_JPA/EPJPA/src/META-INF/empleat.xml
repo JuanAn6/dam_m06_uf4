@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_2.xsd" version="2.2">
+    <entity class="org.milaifontanals.empresa.Empleat" access="FIELD" metadata-complete="true">
+        <table name="emp"/>
+        <named-query name="ComptarSubordinats">
+            <query>select count(e) from Empleat e where e.cap.codi = :codi</query>
+        </named-query>
+        <named-query name="ObtenirSubordinatsEmpleatViaCodi">
+            <query>select e from Empleat e where e.cap.codi = :codi</query>
+        </named-query>
+        <named-query name="ObtenirSubordinatsEmpleatViaObjecte">
+            <query>select e from Empleat e where e.cap = :emp</query>
+        </named-query>
+        <named-query name="ObtenirCodisSubordinatsEmpleatViaCodi">
+            <query>select e.codi from Empleat e where e.cap.codi = :codi</query>
+        </named-query>
+        <attributes>
+            <id name="codi">
+                <column name="emp_no"/>
+            </id>
+            <basic name="cognom" optional="false">
+                <column name="cognom"/>
+            </basic>
+            <basic name="ofici">
+                <column name="ofici"/>
+            </basic>
+            <basic name="dataAlta">
+                <column name="data_alta"/>
+            </basic>
+            <basic name="salari">
+                <column name="salari"/>
+            </basic>
+            <basic name="comissio">
+                <column name="comissio"/>
+            </basic>
+            <many-to-one name="cap" fetch="LAZY">
+                <join-column name="cap" referenced-column-name="emp_no"/>
+                <cascade>
+                    <cascade-persist/>
+                </cascade>
+            </many-to-one>
+            <many-to-one name="dept" fetch="LAZY">
+                <join-column name="dept_no" referenced-column-name="dept_no"/>
+                <cascade>
+                    <cascade-persist/>
+                </cascade>                
+            </many-to-one>
+        </attributes>
+    </entity>
+
+</entity-mappings>
